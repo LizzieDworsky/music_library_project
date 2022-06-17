@@ -71,6 +71,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'music_library.wsgi.application'
 
 
+CORS_ORIGIN_ALLOW_ALL=True
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
