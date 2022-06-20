@@ -1,3 +1,4 @@
+from functools import partial
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -23,7 +24,7 @@ def songs_list(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)    #responding to the request with new data added and the hard coded 201 status
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 def song_details(request, pk):
 
     song = get_object_or_404(Song, pk=pk)                                   #querying the database for one object using the pk(primary key)
@@ -36,6 +37,13 @@ def song_details(request, pk):
         serializer.is_valid(raise_exception=True)                           #validating the data
         serializer.save()                                                   #saving the data after validation
         return Response(serializer.data, status=status.HTTP_200_OK)         #responding to the request with the serialized data and hard coded 200 status
+    elif request.method == "PATCH":
+        song.likes = song.likes +1
+        serializer = SongSerializer(song, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        song.save()
+        return Response(serializer.data)
+    
     elif request.method == "DELETE":                                        #checking request type
         song.delete()                                                       #removing the data permanently from the database
         return Response(status=status.HTTP_204_NO_CONTENT)                  #responding to the request with status 204, used as a confirmation the content has been removed from the database
